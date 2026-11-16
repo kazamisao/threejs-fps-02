@@ -1,6 +1,8 @@
 # Kestrel Yard — a three.js tactical FPS
 
-[![make.fun](https://img.shields.io/badge/make.fun-threejs--fps--02-f0a830)](https://make.fun/c/threejs-fps-02)
+[![make.fun · threejs-fps-02](https://make.fun/badge/threejs-fps-02.svg)](https://make.fun/bounty/threejs-fps-02?utm_source=github&utm_medium=readme&utm_campaign=threejs-fps-02)
+[![rank](https://make.fun/badge/threejs-fps-02/kazamisao/threejs-fps-02/rank.svg)](https://make.fun/bounty/threejs-fps-02/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=threejs-fps-02)
+[![reward](https://make.fun/badge/threejs-fps-02/kazamisao/threejs-fps-02/reward.svg)](https://make.fun/bounty/threejs-fps-02?utm_source=github&utm_medium=readme&utm_campaign=threejs-fps-02)
 
 A round-based tactical first-person shooter in the style Counter-Strike made
 famous — with an original map, original names and original art. You and two
