@@ -14,7 +14,7 @@ export function createState() {
     health: 100,
     alive: true,
     grenades: { he: 0, smoke: 0, flash: 0 },
-    owned: { pistol: true, rifle: false, smg: false },
+    owned: { pistol: true, rifle: false, smg: false, armor: false },
     plantedThisRound: false,
     matchWinner: null,
     winner: null, // 'player' | 'enemy' | null for the round that just ended

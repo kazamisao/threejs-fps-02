@@ -62,7 +62,25 @@ export function createBot(scene, opts) {
   visor.position.set(0, 1.53, -0.14);
   const gun = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.09, 0.5), dark);
   gun.position.set(0.2, 1.1, -0.3);
-  group.add(legs, torso, head, visor, gun);
+  // v2 silhouette: arms reaching to the gun, a chest rig, a backpack and a
+  // helmet band. Purely visual — the hitbox parts above keep their exact
+  // userData.part values and stay the only meshes a ray can score on.
+  const armGeo = new THREE.BoxGeometry(0.11, 0.5, 0.11);
+  const armR = new THREE.Mesh(armGeo, suit);
+  armR.position.set(0.3, 1.08, -0.12);
+  armR.rotation.x = -0.85;
+  const armL = new THREE.Mesh(armGeo, suit);
+  armL.position.set(-0.3, 1.02, -0.16);
+  armL.rotation.x = -1.05;
+  const rig = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.34, 0.06), dark);
+  rig.position.set(0, 1.05, -0.17);
+  const pack = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.44, 0.14), dark);
+  pack.position.set(0, 1.08, 0.21);
+  const helmet = new THREE.Mesh(new THREE.SphereGeometry(0.17, 14, 8, 0, Math.PI * 2, 0, Math.PI / 2), dark);
+  helmet.position.y = 1.54;
+  const belt = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.09, 0.32), dark);
+  belt.position.y = 0.76;
+  group.add(legs, torso, head, visor, gun, armR, armL, rig, pack, helmet, belt);
   group.traverse((mesh) => { if (mesh.isMesh) { mesh.castShadow = true; } });
   scene.add(group);
 

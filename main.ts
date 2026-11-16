@@ -1,11 +1,21 @@
-// Kestrel Yard — a three.js tactical FPS (Node 22, standard library only).
-// The game is this directory's game/ folder: plain static files the browser loads
-// as ES modules, three.js 0.187.0 from an import map, no build step, no network.
-// This program hands it in: it copies game/ and screenshots/ from beside this
-// file to /output and writes /output/dossier.json, the summary the judge reads,
-// with the vendored make.fun library.
+// Kestrel Yard, v2 — a round-based tactical FPS built on three.js (Node 22,
+// standard library only; the game itself needs no build step at all).
 //
-// Serve it locally with `node serve.ts`, then open http://localhost:8080.
+// What is being handed in: the game/ folder beside this file — plain static
+// files the browser loads as ES modules, three.js 0.187.0 vendored, no network
+// calls — plus the four captures in screenshots/. This program's only job is
+// the hand-in: copy both into the output directory and write dossier.json, the
+// summary the judge reads, using the vendored make.fun library.
+//
+// v2 is a look-and-staging round over the complete v1 game (rounds, bots, bomb,
+// economy, grenades unchanged in behaviour): a brighter dusk grade — stronger
+// key and hemisphere light, ACES tone mapping, a painted ground texture with
+// colour-coded zones — rebuilt multi-part weapon view models, bot figures with
+// arms, chest rigs and helmets, five new map landmarks (watchtower, trimmed
+// container stack, striped barriers, fuel tank), a restaged mid-lane duel for
+// the play capture, and one new buy item, the $650 Kevlar Vest.
+//
+// Run the game locally with `node serve.ts`, then open http://localhost:8080.
 // Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
 //   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
 

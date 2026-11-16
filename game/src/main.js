@@ -16,7 +16,7 @@ import { createBomb } from './bomb.js';
 import { createHud } from './hud.js';
 import { createAudio } from './audio.js';
 import { createState, ROUND_SECONDS, BUY_SECONDS, WIN_ROUNDS } from './state.js';
-import { roundReward } from './economy.js';
+import { roundReward, ECONOMY } from './economy.js';
 
 const FIXED_STEP = 1 / 60;
 const params = new URLSearchParams(window.location.search);
@@ -44,11 +44,13 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.15;
 document.getElementById('game').appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(PALETTE.canvas);
-scene.fog = new THREE.Fog(new THREE.Color(PALETTE.canvas), 26, 70);
+scene.background = new THREE.Color(PALETTE.sky);
+scene.fog = new THREE.Fog(new THREE.Color(PALETTE.sky), 30, 80);
 const camera = new THREE.PerspectiveCamera(74, window.innerWidth / window.innerHeight, 0.05, 160);
 scene.add(camera);
 
@@ -163,7 +165,9 @@ function botContext() {
       const dist = hit.distance;
       const falloff = Math.max(0.45, 1 - dist / 60);
       const isHead = hit.object.userData.part === 'head';
-      const damage = Math.round((isHead ? 26 : 11) * falloff);
+      let damage = Math.round((isHead ? 26 : 11) * falloff);
+      // The Kevlar Vest (buy menu, $650) soaks bullet damage to the player.
+      if (hit.object === playerHitbox && state.owned.armor) damage = Math.round(damage * ECONOMY.armorBodyFactor);
       if (hit.object === playerHitbox) damagePlayer(damage, shooter.name);
       else if (hit.object.userData.bot) damageBot(hit.object.userData.bot, damage, isHead, shooter.name);
     },
@@ -267,7 +271,8 @@ function startMatch() {
   state.roundsWon = 0;
   state.roundsLost = 0;
   state.money = 800;
-  state.owned = { pistol: true, rifle: false, smg: false };
+  state.owned = { pistol: true, rifle: false, smg: false, armor: false };
+  hud.setArmor(false);
   state.grenades = { he: 0, smoke: 0, flash: 0 };
   state.matchWinner = null;
   state.phase = 'buy';
@@ -320,6 +325,12 @@ function buy(item) {
     state.grenades[item] += 1;
     hud.setMoney(state.money);
     hud.setGrenades(state.grenades);
+  } else if (item === 'armor') {
+    if (state.owned.armor || state.money < ECONOMY.armorPrice) return;
+    state.money -= ECONOMY.armorPrice;
+    state.owned.armor = true;
+    hud.setMoney(state.money);
+    hud.setArmor(true);
   }
   hud.setBuyAffordability(state.money, state.owned);
 }
@@ -620,20 +631,23 @@ function runShot(name) {
       aimAt(new THREE.Vector3(-10, 1.4, -8));
       hud.setTimer(Math.max(0, bomb.state.blowAt - now), 'live');
     } else {
-      body.position.set(4, 0, 10);
+      body.position.set(3, 0, 7.5);
       settle(60);
-      // Stage the mid-lane duel: bring the mid patroller into the open lane so
-      // the frame shows a bot, the shot, and the fall.
+      // Stage the mid-lane duel (v2 restage): the mid patroller stands in the
+      // open lane ~7 m out — big enough to read arms, rig and team colour — and
+      // the freeze catches the burst itself: only two steps pass after the
+      // shot, so the muzzle flash and the recoil kick are still on screen
+      // alongside the hitmarker.
       const midBot = bots[4];
-      midBot.bot.position.set(2, 0, -2);
+      midBot.bot.position.set(1.5, 0, 0.5);
       settle(2);
       const target = midBot.bot.alive ? midBot : null;
       if (target) {
         // One round only: the hit lands, the marker shows, and the bot stays
         // standing in frame instead of falling out of sight.
-        aimAt(new THREE.Vector3(target.bot.position.x, target.bot.position.y + 1.2, target.bot.position.z));
+        aimAt(new THREE.Vector3(target.bot.position.x, target.bot.position.y + 1.03, target.bot.position.z));
         shoot(0);
-        settle(8);
+        settle(2);
       }
       if (name === 'end') {
         endRound('player', 'Enemy team eliminated');

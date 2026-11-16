@@ -29,18 +29,76 @@ export const GRENADE_DEFS = {
   flash: { id: 'flash', name: 'Flash Grenade', price: 200 },
 };
 
-const VIEW_MODELS = {
-  pistol: { receiver: [0.07, 0.09, 0.3], barrel: [0.035, 0.035, 0.22], stock: null },
-  rifle: { receiver: [0.09, 0.1, 0.42], barrel: [0.045, 0.045, 0.4], stock: [0.075, 0.08, 0.22] },
-  smg: { receiver: [0.08, 0.09, 0.34], barrel: [0.04, 0.04, 0.28], stock: [0.06, 0.07, 0.16] },
-};
+// View models are built from named parts, not slabs: receiver, barrel, handguard,
+// magazine, stock and a sight at each end, in three contrasting materials (pale
+// body metal, dark grip polymer, one amber accent stripe). Local axes: -z is
+// where the gun points, the group is scaled 0.65 and parked at (0.26,-0.26,-0.55)
+// by createWeapon, and the muzzle flash plane sits at z=-1.0 in camera space, so
+// barrels are built to end near local z=-0.62.
+function buildViewModel(id, mats) {
+  const g = new THREE.Group();
+  const part = (w, h, d, x, y, z, mat, rx = 0, rz = 0) => {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+    mesh.position.set(x, y, z);
+    mesh.rotation.x = rx;
+    mesh.rotation.z = rz;
+    g.add(mesh);
+    return mesh;
+  };
+  const barrel = (r, len, x, y, z, mat) => {
+    const mesh = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len, 12), mat);
+    mesh.rotation.x = Math.PI / 2;
+    mesh.position.set(x, y, z);
+    g.add(mesh);
+    return mesh;
+  };
+  if (id === 'pistol') {
+    part(0.075, 0.085, 0.34, 0, 0.01, -0.04, mats.body); // slide
+    part(0.07, 0.05, 0.3, 0, -0.045, -0.03, mats.dark); // frame
+    barrel(0.021, 0.1, 0, 0.02, -0.25, mats.dark); // muzzle
+    part(0.065, 0.17, 0.09, 0, -0.13, 0.1, mats.grip, 0.28); // grip, raked back
+    part(0.05, 0.03, 0.12, 0, -0.075, -0.05, mats.dark); // trigger guard hint
+    part(0.012, 0.035, 0.012, 0, 0.07, -0.19, mats.dark); // front post
+    part(0.05, 0.03, 0.015, 0, 0.065, 0.12, mats.dark); // rear sight
+    part(0.078, 0.014, 0.2, 0, 0.058, -0.05, mats.accent); // slide stripe
+  } else if (id === 'rifle') {
+    part(0.09, 0.11, 0.4, 0, 0, 0.02, mats.body); // receiver
+    part(0.075, 0.09, 0.34, 0, 0.005, -0.36, mats.grip); // handguard
+    barrel(0.024, 0.22, 0, 0.03, -0.62, mats.dark); // barrel
+    part(0.05, 0.05, 0.07, 0, 0.03, -0.72, mats.dark); // muzzle brake
+    part(0.055, 0.19, 0.1, 0, -0.14, -0.02, mats.dark, 0.16); // magazine, curved forward
+    part(0.07, 0.16, 0.085, 0, -0.12, 0.16, mats.grip, 0.22); // pistol grip
+    part(0.075, 0.09, 0.24, 0, 0.01, 0.32, mats.grip); // stock
+    part(0.02, 0.05, 0.2, 0, 0.085, 0.0, mats.dark); // carry rail
+    part(0.012, 0.04, 0.012, 0, 0.1, -0.5, mats.dark); // front post
+    part(0.055, 0.035, 0.015, 0, 0.095, 0.14, mats.dark); // rear sight
+    part(0.094, 0.016, 0.3, 0, -0.03, -0.36, mats.accent); // handguard stripe
+  } else {
+    // smg
+    part(0.08, 0.1, 0.36, 0, 0, 0.0, mats.body); // receiver
+    part(0.07, 0.08, 0.22, 0, 0.01, -0.28, mats.dark); // barrel shroud
+    barrel(0.02, 0.14, 0, 0.025, -0.44, mats.dark); // barrel tip
+    part(0.05, 0.22, 0.09, 0, -0.15, -0.06, mats.dark, 0.1); // long magazine
+    part(0.04, 0.13, 0.04, 0, -0.11, -0.3, mats.grip); // vertical foregrip
+    part(0.065, 0.15, 0.08, 0, -0.11, 0.14, mats.grip, 0.22); // pistol grip
+    part(0.03, 0.03, 0.2, 0, 0.03, 0.27, mats.dark); // wire stock, top strut
+    part(0.03, 0.03, 0.2, 0, -0.05, 0.27, mats.dark); // wire stock, low strut
+    part(0.012, 0.035, 0.012, 0, 0.075, -0.36, mats.dark); // front post
+    part(0.05, 0.03, 0.015, 0, 0.07, 0.1, mats.dark); // rear sight
+    part(0.084, 0.014, 0.24, 0, 0.045, 0.0, mats.accent); // receiver stripe
+  }
+  return g;
+}
 
 export function createWeapon(camera) {
   const grip = new THREE.MeshStandardMaterial({ color: new THREE.Color(PALETTE.hairline), roughness: 0.7, metalness: 0.2 });
   const body = new THREE.MeshStandardMaterial({ color: new THREE.Color(PALETTE.ink), roughness: 0.5, metalness: 0.35 });
+  const dark = new THREE.MeshStandardMaterial({ color: new THREE.Color(PALETTE.canvas), roughness: 0.6, metalness: 0.3 });
+  const accent = new THREE.MeshStandardMaterial({ color: new THREE.Color(PALETTE.accent), roughness: 0.45, metalness: 0.25 });
+  const mats = { grip, body, dark, accent };
   const model = new THREE.Group();
   const flash = new THREE.Mesh(
-    new THREE.PlaneGeometry(0.24, 0.24),
+    new THREE.PlaneGeometry(0.17, 0.17),
     new THREE.MeshBasicMaterial({ color: new THREE.Color(PALETTE.accent), transparent: true, opacity: 0.9, depthWrite: false, side: THREE.DoubleSide }),
   );
   flash.position.set(0.26, -0.24, -1.0);
@@ -58,17 +116,7 @@ export function createWeapon(camera) {
 
   function rebuildViewModel() {
     while (model.children.length) model.remove(model.children[0]);
-    const spec = VIEW_MODELS[state.weaponId];
-    const receiver = new THREE.Mesh(new THREE.BoxGeometry(...spec.receiver), body);
-    model.add(receiver);
-    const barrel = new THREE.Mesh(new THREE.BoxGeometry(...spec.barrel), grip);
-    barrel.position.set(0, 0.025, -0.3 - spec.barrel[2] / 2);
-    model.add(barrel);
-    if (spec.stock) {
-      const stock = new THREE.Mesh(new THREE.BoxGeometry(...spec.stock), grip);
-      stock.position.set(0, -0.02, 0.26);
-      model.add(stock);
-    }
+    model.add(buildViewModel(state.weaponId, mats));
   }
 
   function equip(id, keepAmmo) {

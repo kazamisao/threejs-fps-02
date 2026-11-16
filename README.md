@@ -10,6 +10,14 @@ letting it blow; lose it if the timer runs out or the bomb is defused. Money
 earned each round buys rifles, SMGs and grenades in the buy phase. First to
 5 rounds takes the match.
 
+**v2** is a look-and-staging round over that complete game: a brighter dusk
+grade (stronger key and hemisphere light, ACES tone mapping, a painted ground
+texture with colour-coded zones), weapon view models rebuilt from named parts
+instead of slabs, bot figures with arms, chest rigs and helmets, five new map
+landmarks, a restaged mid-lane duel for the play capture, and a new buy item —
+the $650 Kevlar Vest, which cuts bullet damage to the body to ×0.55 while
+worn and shows an ARMOR readout in the HUD.
+
 ## Play
 
 ```sh
@@ -39,15 +47,20 @@ request: `game/` is plain static files, three.js 0.187.0 vendored under
   spread that grows while you move, so stopping to aim pays. Three weapons:
   Kestrel P9 pistol, Vulture AR rifle, Hornet SMG.
 - **Tactics** — a bomb to plant and defuse (3 s plant, 5 s defuse, 45 s fuse),
-  round economy ($300/kill, $3,250/round win, $1,900/round loss), a buy menu,
-  and HE / smoke / flash grenades. Smoke blocks bot sightlines; a flash blinds
-  bots that see the burst.
+  round economy ($300/kill, $3,250/round win, $1,900/round loss), a buy menu
+  (three weapons, three grenades, and the $650 Kevlar Vest), and HE / smoke /
+  flash grenades. Smoke blocks bot sightlines; a flash blinds bots that see
+  the burst.
 - **Bots** — patrol routes through the yard, hold site angles, investigate
   gunshots and explosions they hear, and fight with distance falloff and
   movement spread. Enemies converge on a planted bomb to defuse it.
 - **Map** — Kestrel Yard: a 44 × 30 m dusk yard with two sites, a mid lane,
   north and south lanes, containers, crates and pillars for cover and
-  sightlines.
+  sightlines, plus landmarks that name each area — a watchtower over the
+  north lane, a two-high container stack with amber trim, striped barriers
+  flanking mid, and a fuel tank in the south-east corner. The ground is a
+  painted texture: amber wash on site A, rust on site B, teal on the spawn
+  apron, dashed paint down mid.
 - **Code** — one job per module (`world`, `player`, `weapons`, `bots`,
   `grenades`, `bomb`, `economy`, `state`, `hud`, `input`, `audio`), a fixed
   60 Hz simulation kept apart from rendering, shared scratch vectors instead

@@ -44,6 +44,7 @@ export function createHud() {
   const buyMenu = $('buy-menu');
   const buyMoney = $('buy-money');
   const grenades = $('grenades');
+  const armor = $('armor');
   const crosshair = $('crosshair');
   const hitmarker = $('hitmarker');
   const flash = $('flash');
@@ -87,6 +88,11 @@ export function createHud() {
     setMoney(value) {
       setText(moneyValue, 'money', `$${value.toLocaleString('en-US')}`);
       setText(buyMoney, 'buyMoney', `$${value.toLocaleString('en-US')}`);
+    },
+    setArmor(worn) {
+      if (cache.armor === worn) return;
+      cache.armor = worn;
+      armor.hidden = !worn;
     },
     setGrenades(g) {
       setText(grenades, 'grenades', `4 HE ${g.he} · 5 SMOKE ${g.smoke} · 6 FLASH ${g.flash}`);

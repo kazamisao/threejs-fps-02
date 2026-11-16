@@ -8,6 +8,8 @@ export const ECONOMY = {
   roundWin: 3250,
   roundLoss: 1900,
   maxMoney: 16000,
+  armorPrice: 650,
+  armorBodyFactor: 0.55,
 };
 
 export function roundReward(won, kills, planted) {

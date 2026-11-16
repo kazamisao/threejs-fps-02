@@ -77,6 +77,7 @@
   #health-fill { height: 100%; width: 100%; background: var(--teal); }
   #health-fill.low { background: var(--enemy); }
   #health-value { color: var(--ink); font-size: 26px; }
+  #armor { color: var(--teal); font-size: 12px; letter-spacing: 0.06em; margin-top: 6px; }
 
   #ammo {
     position: fixed; right: 32px; bottom: 24px; text-align: right;
@@ -176,7 +177,7 @@
   <div id="bomb-status" hidden></div>
   <div id="banner" hidden></div>
   <div id="plant-bar" hidden><div id="plant-fill"></div></div>
-  <div id="health"><span id="health-value">100</span> HP<div id="health-bar"><div id="health-fill"></div></div></div>
+  <div id="health"><span id="health-value">100</span> HP<div id="health-bar"><div id="health-fill"></div></div><div id="armor" hidden>ARMOR — KEVLAR VEST</div></div>
   <div id="money"><span id="money-value">$800</span></div>
   <div id="ammo"><span id="ammo-mag">12</span><span id="ammo-reserve">/ 48</span><div id="weapon-name">Kestrel P9</div><div id="grenades"></div></div>
   <div id="flash"></div>
@@ -192,6 +193,7 @@
     <button type="button" data-item="he" data-price="300"><b>$300</b>4 · HE Grenade<small>Explodes on a fuse · max 2</small></button>
     <button type="button" data-item="smoke" data-price="300"><b>$300</b>5 · Smoke Grenade<small>Blocks enemy sightlines · max 2</small></button>
     <button type="button" data-item="flash" data-price="200"><b>$200</b>6 · Flash Grenade<small>Blinds bots that see the burst · max 2</small></button>
+    <button type="button" data-item="armor" data-price="650"><b>$650</b>7 · Kevlar Vest<small>Bullet damage to the body ×0.55 while worn</small></button>
   </div>
 </div>
 
