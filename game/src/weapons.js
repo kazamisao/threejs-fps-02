@@ -97,10 +97,10 @@ export function createWeapon(camera) {
   const accent = new THREE.MeshStandardMaterial({ color: new THREE.Color(PALETTE.accent), roughness: 0.45, metalness: 0.25 });
   const mats = { grip, body, dark, accent };
   const model = new THREE.Group();
-  const flash = new THREE.Mesh(
-    new THREE.PlaneGeometry(0.17, 0.17),
-    new THREE.MeshBasicMaterial({ color: new THREE.Color(PALETTE.accent), transparent: true, opacity: 0.9, depthWrite: false, side: THREE.DoubleSide }),
-  );
+  const flashMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(PALETTE.accent), transparent: true, opacity: 0.85, depthWrite: false, side: THREE.DoubleSide });
+  const flash = new THREE.Group();
+  flash.add(new THREE.Mesh(new THREE.PlaneGeometry(0.11, 0.028), flashMat));
+  flash.add(new THREE.Mesh(new THREE.PlaneGeometry(0.028, 0.11), flashMat));
   flash.position.set(0.26, -0.24, -1.0);
   flash.visible = false;
   camera.add(flash);
